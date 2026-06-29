@@ -253,10 +253,8 @@ inline void IVF::load(const char *filename)
               std::accumulate(cluster_sizes.begin(), cluster_sizes.end(), 0));
 
     allocate_clusters(cluster_sizes);
-    for (size_t i = 0; i < num_cen_; ++i) {
-        for (auto &pclu : parallel_clusters_) {
-            pclu.load(input);
-        }
+    for (auto &pclu : parallel_clusters_) {
+        pclu.load(input);
     }
 
     input.close();

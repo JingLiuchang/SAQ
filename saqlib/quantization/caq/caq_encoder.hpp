@@ -236,7 +236,7 @@ class CAQEncoder {
         base_code.o_l2norm = caq.o_l2norm;
         base_code.fac_rescale = caq.fac_rescale;
         base_code.fac_error = caq.fac_error;
-        if (num_bits_ > 1) {
+        if (num_bits_ > 0) {
             if (centroid) {
                 base_code.ip_cent_oa = centroid->dot(caq.get_oa());
             }

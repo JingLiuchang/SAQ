@@ -42,17 +42,27 @@ struct SaqData {
         input.read(reinterpret_cast<char *>(&cfg), sizeof(QuantizeConfig));
         input.read(reinterpret_cast<char *>(&num_dim), sizeof(size_t));
         utils::load_floatvec(input, data_variance);
-        CHECK_EQ(data_variance.cols(), num_dim) << "data_variance size mismatch with num_dim";
 
         size_t size;
         input.read(reinterpret_cast<char *>(&size), sizeof(size_t));
         base_datas.clear();
         quant_plan.clear();
+        size_t padded_dim = 0;
         base_datas.resize(size);
         for (auto &bi : base_datas) {
             bi.load(input);
             quant_plan.emplace_back(bi.num_dim_pad, bi.num_bits);
+            padded_dim += bi.num_dim_pad;
         }
+
+        const size_t variance_dim = static_cast<size_t>(data_variance.cols());
+        if (variance_dim == num_dim && num_dim < padded_dim) {
+            FloatVec padded_variance = FloatVec::Zero(padded_dim);
+            padded_variance.head(num_dim) = data_variance;
+            data_variance = std::move(padded_variance);
+        }
+        CHECK_EQ(static_cast<size_t>(data_variance.cols()), padded_dim)
+            << "data_variance size mismatch with padded dimension";
     }
 };
 
