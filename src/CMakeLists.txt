@@ -1,5 +1,14 @@
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
+find_package(Threads REQUIRED)
+
+add_library(saq_p1_bridge SHARED p1_bridge.cpp)
+target_link_libraries(saq_p1_bridge PRIVATE glog::glog fmt::fmt Threads::Threads)
+set_target_properties(
+    saq_p1_bridge
+    PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin
+)
+
 add_executable(create_index create_index.cpp)
 target_link_libraries(create_index PRIVATE glog::glog fmt::fmt ${GFLAGS_LIBRARIES})
 
